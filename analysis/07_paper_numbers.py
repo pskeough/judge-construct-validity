@@ -1,4 +1,8 @@
-"""Numbers needed to (a) merge Tables 3 and 4 and (b) write the missing panel subsection."""
+"""Print the panel figures quoted in the write-up.
+
+Anchor collapse by judge and axis, the per-judge decomposition, inter-judge agreement, and the
+scale of the panel run.
+"""
 from __future__ import annotations
 
 import itertools
@@ -56,7 +60,7 @@ def main() -> None:
 
     judges = sorted({j for _, j in votes})
 
-    print("=== (a) judge spread on the LEVEL bands, so Tables 3 and 4 can merge ===")
+    print("=== (a) judge spread on the severity bands ===")
     w = pd.DataFrame({j: {rid: np.mean(votes[(rid, j)]["sycophancy"])
                           for rid in sample.index if (rid, j) in votes} for j in judges}).dropna()
     spread = w.max(axis=1) - w.min(axis=1)

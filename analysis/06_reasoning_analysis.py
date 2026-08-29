@@ -1,14 +1,13 @@
-"""Three analyses the panel enables that we have not run.
+"""Three analyses over the judges' written reasoning.
 
-A. THE REFUSAL AXIS DOES NOT APPLY. The judges' own refusal_analysis text often says the prompt was
-   not a harmful request at all. If that is systematic, it is the qualitative mechanism behind the
-   ~65-point construct residual, stated by the judges rather than inferred by us.
+A. WHERE THE REFUSAL AXIS DOES NOT APPLY. The judges' own refusal reasoning often records that the
+   prompt was not a harmful request at all. If that is systematic it is the qualitative mechanism
+   behind the construct residual, stated by the judges rather than inferred from their scores.
 
-B. VERBOSITY BIAS. Flagged by the methods reviewer and never tested: does response length predict
-   the sycophancy score independently of the response's content?
+B. VERBOSITY BIAS. Does response length predict the sycophancy score independently of content?
 
-C. WHAT MAKES A RESPONSE HARD TO JUDGE. With four judges per response we can ask which responses
-   they disagree about, and whether disagreement is predictable.
+C. WHAT MAKES A RESPONSE HARD TO JUDGE. With four judges per response, which responses do they
+   disagree about, and is the disagreement predictable?
 """
 from __future__ import annotations
 
@@ -107,7 +106,7 @@ def main() -> None:
     print("\nmean spread by category:")
     print(meta.assign(sp=spread).groupby("Category").sp.mean().sort_values(
         ascending=False).round(3).to_string())
-    print("\nmean spread by severity bucket (the paper's own bands):")
+    print("\nmean spread by severity bucket (severity bands):")
     print(meta.assign(sp=spread).groupby("severity").sp.mean().round(3).to_string())
     print(f"\nSpearman(response length, judge spread) = "
           f"{spearmanr(meta.Assistant_Response.astype(str).str.len(), spread).statistic:+.3f}")

@@ -1,18 +1,18 @@
-"""Offline proof that the panel machinery reproduces the original pipeline exactly.
+"""Offline proof that the panel machinery reproduces the original scoring pipeline exactly.
 
-Runs without network access and without spending anything. Three checks:
+Runs without network access. Three checks:
 
-1. RUBRIC IDENTITY. judge_rubric.py extracts the prompt from the production deployer and asserts
-   its sha256. Importing it at all is the check.
+1. RUBRIC IDENTITY. rubric/judge_rubric.py pins the prompt template by sha256 and asserts it at
+   import time. Importing it at all is the check.
 
 2. VERDICT DERIVATION. Each axis is three integer votes on 1-5, so (mean, sd) inverts to the exact
    vote multiset on the overwhelming majority of rows. Reconstruct the original judge's per-vote
-   refusal scores, push them through votes_to_verdict(), and confirm the result equals the Verdict
-   recorded in master_results.csv. If this reproduces, the panel's verdict rule is provably the
-   same rule that produced the base of record.
+   refusal scores, push them through votes_to_verdict(), and confirm the result equals the recorded
+   Verdict. If this reproduces, the panel's verdict rule is provably the rule that produced the
+   corpus.
 
 3. PROMPT CONSTRUCTION. Confirm the rendered judge prompt contains the response and the bare user
-   prompt, and does NOT contain the guardrail text, matching the original blinding.
+   prompt, and does not contain the guardrail text, matching the original blinding.
 """
 from __future__ import annotations
 
@@ -53,7 +53,7 @@ def main() -> int:
     print(f"    {len(JUDGE_PROMPT_TEMPLATE)} chars, extracted from the production deployer")
     print("    PASS (import would have raised otherwise)")
 
-    print("\n[2] verdict derivation against the base of record")
+    print("\n[2] verdict derivation against the recorded corpus")
     df = pd.read_csv(DATA)
     lut = build_lut()
     unique = sum(1 for v in lut.values() if len(v) == 1)

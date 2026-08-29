@@ -1,22 +1,18 @@
 """Build the stratified panel sample.
 
-Stratifies on severity bucket x guardrail condition x generation (5 x 3 x 3 = 45 cells).
+Stratifies on severity bucket x guardrail condition x generation, 5 x 3 x 3 = 45 cells.
 
-Allocation is PROPORTIONAL WITH A FLOOR rather than balanced. Proportional keeps corpus-level
-quantities (the R^2 decomposition, mean agreement) near-unbiased; the floor guarantees the rare
-severity cells carry enough rows to support the by-severity analysis, which is where the U-shaped
-detection curve lives. Every sampled row carries its inclusion probability so corpus-level
+Allocation is proportional with a floor rather than balanced. Proportional keeps corpus-level
+quantities near-unbiased; the floor guarantees the rare severity cells carry enough rows to support
+the by-severity analysis. Every sampled row carries its inclusion probability, so corpus-level
 estimates can be reweighted back.
 
-This exists because the paper's existing 73-response human-validation subset was NOT stratified,
-and is badly unrepresentative as a result: condition mix Protocol 44 / Control 23 / Simple 6
-against a balanced corpus, and sycophancy sd 0.561 against 0.985 corpus-wide. That skew is a live
-alternative explanation for several of its findings. Do not repeat it.
+Stratification matters here because an unstratified subset of this corpus skews hard on condition
+and compresses the severity variance, which leaves a live alternative explanation for anything
+computed on it.
 
-Writes:
-    sample/panel_sample.csv      the sampled rows with strata and weights
-    sample/panel_sample.sha256   hash of the above, so the run is provably against this sample
-    sample/allocation.md         the realised allocation table
+Writes the sampled rows with their strata and weights, a sha256 of that file so a run is provably
+against one sample, and the realised allocation table.
 """
 from __future__ import annotations
 

@@ -1,7 +1,8 @@
-"""Spot-check the regex that classifies a refusal_analysis as 'nothing harmful was asked'.
+"""Spot-check the regex that classifies a refusal_analysis as "nothing harmful was asked".
 
-The 26.3% figure is load-bearing, so the classifier needs a precision check against actual text
-rather than being trusted because it produced a tidy number.
+The rate this classifier produces is load-bearing, so it gets a precision check against actual text
+rather than being trusted because it produced a tidy number. Prints a random sample of flagged and
+unflagged passages for manual inspection.
 """
 from __future__ import annotations
 

@@ -1,21 +1,22 @@
 """Run the multi-judge panel over the stratified sample.
 
-Every judge scores every sampled response on the SAME rubric the base of record was scored with
-(see judge_rubric.py, which hashes the original to prevent drift), with the same temperature (0.7),
-the same vote count (3), and the same blinding: the judge sees Prompt_Text only, never the
-guardrail, exactly as sycophancy_deployer_openrouter.py:329 does.
+Every judge scores every sampled response on the same rubric the corpus was scored with
+(rubric/judge_rubric.py, which pins the template by sha256), at the same temperature, with the same
+vote count, and under the same blinding: the judge sees the bare prompt text only, never the
+guardrail.
 
-Every individual vote is written to judge_logs.jsonl with its raw reasoning. That file has never
-existed for this project; its absence has been the single largest limitation in every audit so far.
+Every individual vote is written with its raw reasoning, so the per-vote record survives rather than
+only the aggregate.
 
 The run is resumable and idempotent. Completed (response_id, judge, vote_index) triples are skipped
 on restart, so an interrupted run costs nothing to resume.
 
+Requires an OPENROUTER_API_KEY. Every other script runs offline against the shipped data.
+
 Usage:
-    python panel_2026_08/01_run_panel.py --smoke            # 3 responses x all judges, prints cost
-    python panel_2026_08/01_run_panel.py --limit 50         # partial run
-    python panel_2026_08/01_run_panel.py                    # full run
-    python panel_2026_08/01_run_panel.py --judges deepseek/deepseek-v4-flash-0731
+    python analysis/01_run_panel.py --smoke     # 3 responses x all judges, prints cost
+    python analysis/01_run_panel.py --limit 50  # partial run
+    python analysis/01_run_panel.py             # full run
 """
 from __future__ import annotations
 

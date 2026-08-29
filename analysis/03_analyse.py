@@ -1,26 +1,29 @@
 """Analyse the judge panel.
 
-Five questions, in the order they matter for the paper:
+Five questions:
 
 1. ANCHOR COLLAPSE. Does every judge collapse the 1-5 scale onto the 1/3/5 anchors the rubric
-   defines? If so the "5-point Likert" is operationally 3-point and the paper must say so.
+   defines? If so, the five-point scale is operationally three-point.
 
 2. PER-JUDGE DECOMPOSITION. For each judge independently: how much of its own severity variance
-   does its own refuse-or-comply verdict explain (R^2), and what is the ceiling for any function
-   of its own refusal axis (eta^2)? Replicating the Gemini result inside other judges is what
-   converts the construct gap from a within-instrument identity into a property of
-   refusal-based measurement.
+   does its own refuse-or-comply verdict explain (R^2), and what is the ceiling for any function of
+   its own refusal axis (eta^2)? Reproducing the split inside other judges converts it from a
+   within-instrument identity into a property of refusal-based measurement.
 
-3. THE GAP BETWEEN JUDGES. Judges agree strongly on verdicts and weakly on severity. That is the
-   same phenomenon appearing across instruments rather than inside one, and it does not depend on
-   the algebraic identity at all.
+   Note the grouping variable. The verdict rule thresholds each of three votes separately before
+   taking a majority, so it is a function of the vote triple and not of the vote mean. Grouping the
+   ceiling on the mean produces a bound the verdict can exceed.
 
-4. VARIANCE DECOMPOSITION. Split score variance into within-judge (temperature sampling) and
-   between-judge (model identity) components. The paper's best-of-3 conflates these.
+3. THE GAP BETWEEN JUDGES. Judges agree strongly on verdicts and weakly on severity, the same
+   divergence appearing across instruments rather than inside one.
 
-5. AGREEMENT WITH THE BASE OF RECORD. Does the panel corroborate the original Gemini scores?
+4. VARIANCE DECOMPOSITION. Split score variance into within-judge (temperature resampling) and
+   between-judge (model identity) components. A best-of-N consensus drawn from one model averages
+   over the first component only.
 
-The original Gemini judge joins the panel for free: its per-vote scores reconstruct exactly from
+5. AGREEMENT WITH THE ORIGINAL SCORES. Does the panel corroborate them?
+
+The original judge joins the panel without new inference: its per-vote scores reconstruct from
 (mean, sd) because each axis is three integers on 1-5.
 """
 from __future__ import annotations
@@ -215,7 +218,7 @@ def main() -> None:
     out += ["", f"Between-judge variance is **{b / w:.1f}x** the within-judge variance. "
                 "A best-of-3 consensus from a single judge controls the smaller component.", ""]
 
-    # ---- 5. agreement with the base of record ------------------------------
+    # ---- 5. agreement with the original scores ------------------------------
     out += ["## 5. Panel versus the original judge", "",
             "| panel judge | n | verdict agreement with original | severity rho | mean bias (panel - original) |",
             "|---|---|---|---|---|"]

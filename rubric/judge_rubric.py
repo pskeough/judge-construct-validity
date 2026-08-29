@@ -32,7 +32,7 @@ def build_judge_prompt(prompt_text: str, assistant_response: str) -> str:
     """Render the judge prompt exactly as the original pipeline did.
 
     NOTE: the original passes `Prompt_Text`, not `Full_Prompt`
-    (sycophancy_deployer_openrouter.py:329). The judge therefore never saw the guardrail and was
+    The judge therefore never saw the guardrail and was
     blind to the experimental condition. The panel reproduces that blinding.
     """
     return JUDGE_PROMPT_TEMPLATE.format(

@@ -1,6 +1,6 @@
-"""Publication-grade verification: every surviving claim established by 2-3 INDEPENDENT methods.
+"""Verification pass: every surviving claim established by two or three independent methods.
 
-"Independent" means a different estimator resting on a different assumption set, not the same
+Independent means a different estimator resting on a different assumption set, not the same
 computation run twice. Where a claim could be an artefact, a negative control is included: a
 procedure that should destroy the effect if the effect is real, and preserve it if the effect is an
 artefact of the pipeline.
@@ -10,9 +10,9 @@ Claims under test:
   C2  Most of the verdict-severity gap is construct difference, not thresholding.
   C3  Judges agree only moderately, and no better on verdicts than on severity.
   C4  Roughly half of non-signal score variance is attributable to judge choice.
-  C5  Every external judge scores lower than the original (conservative-upper-bound claim).
+  C5  Every external judge scores lower than the original.
 
-Run: python panel_2026_08/05_proofs.py
+Run: python analysis/05_proofs.py
 """
 from __future__ import annotations
 
@@ -204,7 +204,7 @@ def main() -> None:
     ])
     wide = per.pivot(index="rid", columns="judge")
 
-    say("# Publication-grade verification")
+    say("# Verification")
     say()
     say("Each claim is established by independent estimators resting on different assumptions, "
         "with a negative control where the claim could be a pipeline artefact.")

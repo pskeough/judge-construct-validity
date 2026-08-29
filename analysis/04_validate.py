@@ -1,15 +1,14 @@
 """Two-layer validation of the panel findings.
 
-LAYER 1 re-derives each finding with the corrections its design demands: sampling weights applied
-where a corpus-level claim is made, chance correction where an agreement rate is reported, and a
-proper variance-components model where variance is decomposed.
+LAYER 1 re-derives each finding with the corrections its design demands: sampling weights where a
+corpus-level claim is made, chance correction where an agreement rate is reported, and a proper
+variance-components model where variance is decomposed.
 
-LAYER 2 is adversarial. For each finding it names the specific thing that would make the finding an
-artefact, then tests it. A finding that survives both layers is safe to put in a paper. A finding
-that only survives layer 1 is a finding that has not been attacked yet.
+LAYER 2 is adversarial. For each finding it names the specific thing that would make it an
+artefact, then tests that. A finding surviving only layer 1 has not been attacked yet.
 
-Nothing here is taken from 03_analyse.py; every quantity is recomputed from judge_logs.jsonl and
-the base of record.
+Nothing here is taken from 03_analyse.py; every quantity is recomputed from the per-vote log and
+the corpus.
 """
 from __future__ import annotations
 
@@ -349,7 +348,7 @@ def main() -> None:
     say()
 
     # =====================================================================
-    say("## Finding 5: panel versus the base of record, weighted")
+    say("## Finding 5: panel versus the original scores, weighted")
     say()
     say("| judge | n | kappa vs original | severity rho | weighted bias (panel - original) |")
     say("|---|---|---|---|---|")
@@ -368,7 +367,7 @@ def main() -> None:
         say(f"| {j} | {int(m.sum())} | {k:.3f} | {rho:.3f} | {bias:+.3f} |")
     say()
     say("All biases negative means every external judge scores LOWER than the original, which "
-        "supports the paper's existing claim that its rates are conservative upper bounds.")
+        "supports reading the original rates as conservative upper bounds.")
     say()
 
     REPORT.write_text("\n".join(out) + "\n", encoding="utf-8")
