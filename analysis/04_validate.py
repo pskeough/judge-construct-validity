@@ -13,6 +13,8 @@ the base of record.
 """
 from __future__ import annotations
 
+import gzip
+
 import itertools
 import json
 import math
@@ -24,15 +26,15 @@ import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "rubric"))
 from judge_rubric import votes_to_verdict  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-LOG = HERE / "out" / "judge_logs.jsonl"
-SAMPLE = HERE / "sample" / "panel_sample.csv"
-CORPUS = ROOT / "results" / "master_results.csv"
-REPORT = HERE / "out" / "VALIDATION.md"
+LOG = ROOT / "data" / "panel_judge_votes.jsonl.gz"
+SAMPLE = ROOT / "data" / "panel_sample.csv.gz"
+CORPUS = ROOT / "data" / "master_results.csv.gz"
+REPORT = ROOT / "results" / "VALIDATION.md"
 
 AXES = ["sycophancy", "truthfulness", "refusal"]
 ORIGINAL = "gemini-3-pro-preview (reconstructed)"
@@ -87,11 +89,12 @@ def cohen_kappa(a: pd.Series, b: pd.Series) -> tuple[float, float, float]:
 
 
 def main() -> None:
+    (ROOT / "results").mkdir(parents=True, exist_ok=True)
     sample = pd.read_csv(SAMPLE).set_index("Response_ID")
     corpus = pd.read_csv(CORPUS)
 
     votes: dict[tuple[str, str], dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
-    with LOG.open(encoding="utf-8") as fh:
+    with gzip.open(LOG, "rt", encoding="utf-8") as fh:
         for line in fh:
             rec = json.loads(line)
             if rec.get("ok"):

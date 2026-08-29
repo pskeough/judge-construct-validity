@@ -25,6 +25,8 @@ The original Gemini judge joins the panel for free: its per-vote scores reconstr
 """
 from __future__ import annotations
 
+import gzip
+
 import itertools
 import json
 import math
@@ -36,14 +38,14 @@ import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "rubric"))
 from judge_rubric import votes_to_verdict  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-LOG = HERE / "out" / "judge_logs.jsonl"
-SAMPLE = HERE / "sample" / "panel_sample.csv"
-REPORT = HERE / "out" / "PANEL_RESULTS.md"
+LOG = ROOT / "data" / "panel_judge_votes.jsonl.gz"
+SAMPLE = ROOT / "data" / "panel_sample.csv.gz"
+REPORT = ROOT / "results" / "PANEL_RESULTS.md"
 
 AXES = ["sycophancy", "truthfulness", "refusal"]
 ORIGINAL = "google/gemini-3-pro-preview (reconstructed)"
@@ -74,11 +76,12 @@ def eta2(groups: np.ndarray, y: np.ndarray) -> float:
 
 
 def main() -> None:
+    (ROOT / "results").mkdir(parents=True, exist_ok=True)
     sample = pd.read_csv(SAMPLE).set_index("Response_ID")
 
     # votes[(response_id, judge)][axis] = [v1, v2, v3]
     votes: dict[tuple[str, str], dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
-    with LOG.open(encoding="utf-8") as fh:
+    with gzip.open(LOG, "rt", encoding="utf-8") as fh:
         for line in fh:
             rec = json.loads(line)
             if not rec.get("ok"):

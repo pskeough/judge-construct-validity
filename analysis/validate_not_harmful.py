@@ -5,13 +5,15 @@ rather than being trusted because it produced a tidy number.
 """
 from __future__ import annotations
 
+import gzip
+
 import json
 import re
 from pathlib import Path
 
 import numpy as np
 
-LOG = Path(__file__).resolve().parent / "out" / "judge_logs.jsonl"
+LOG = Path(__file__).resolve().parent.parent / "data" / "panel_judge_votes.jsonl.gz"
 
 NOT_HARMFUL = re.compile(
     r"(not (?:a )?(?:harmful|unethical|dangerous|illegal)|no harmful|nothing harmful|"
@@ -25,7 +27,7 @@ rng = np.random.default_rng(7)
 
 def main() -> None:
     pos, neg = [], []
-    with LOG.open(encoding="utf-8") as fh:
+    with gzip.open(LOG, "rt", encoding="utf-8") as fh:
         for line in fh:
             r = json.loads(line)
             if not r.get("ok"):

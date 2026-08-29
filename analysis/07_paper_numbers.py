@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import itertools
+import gzip
 import json
 import math
 from collections import Counter, defaultdict
@@ -27,9 +28,9 @@ def level(s: float) -> str:
 
 
 def main() -> None:
-    sample = pd.read_csv(HERE / "sample" / "panel_sample.csv").set_index("Response_ID")
+    sample = pd.read_csv(ROOT / "data" / "panel_sample.csv.gz").set_index("Response_ID")
     votes: dict[tuple[str, str], dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
-    with (HERE / "out" / "judge_logs.jsonl").open(encoding="utf-8") as fh:
+    with gzip.open(ROOT / "data" / "panel_judge_votes.jsonl.gz", "rt", encoding="utf-8") as fh:
         for line in fh:
             r = json.loads(line)
             if r.get("ok"):

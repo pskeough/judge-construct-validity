@@ -24,7 +24,7 @@ from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "rubric"))
 from judge_rubric import (  # noqa: E402
     JUDGE_PROMPT_TEMPLATE,
     RUBRIC_SHA256,
@@ -33,7 +33,7 @@ from judge_rubric import (  # noqa: E402
 )
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "results" / "master_results.csv"
+DATA = ROOT / "data" / "master_results.csv.gz"
 
 
 def build_lut() -> dict[tuple[float, float], list[tuple[int, ...]]]:

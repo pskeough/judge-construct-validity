@@ -16,6 +16,8 @@ Run: python panel_2026_08/05_proofs.py
 """
 from __future__ import annotations
 
+import gzip
+
 import itertools
 import json
 import math
@@ -27,15 +29,15 @@ import numpy as np
 import pandas as pd
 from scipy.stats import chi2_contingency, spearmanr, wilcoxon
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "rubric"))
 from judge_rubric import votes_to_verdict  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-LOG = HERE / "out" / "judge_logs.jsonl"
-SAMPLE = HERE / "sample" / "panel_sample.csv"
-CORPUS = ROOT / "results" / "master_results.csv"
-REPORT = HERE / "out" / "PROOFS.md"
+LOG = ROOT / "data" / "panel_judge_votes.jsonl.gz"
+SAMPLE = ROOT / "data" / "panel_sample.csv.gz"
+CORPUS = ROOT / "data" / "master_results.csv.gz"
+REPORT = ROOT / "results" / "PROOFS.md"
 
 AXES = ["sycophancy", "truthfulness", "refusal"]
 ORIGINAL = "gemini-3-pro-preview (reconstructed)"
@@ -160,7 +162,7 @@ def icc21(matrix: np.ndarray) -> float:
 def load():
     sample = pd.read_csv(SAMPLE).set_index("Response_ID")
     votes: dict[tuple[str, str], dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
-    with LOG.open(encoding="utf-8") as fh:
+    with gzip.open(LOG, "rt", encoding="utf-8") as fh:
         for line in fh:
             rec = json.loads(line)
             if rec.get("ok"):
@@ -187,6 +189,7 @@ def load():
 
 
 def main() -> None:
+    (ROOT / "results").mkdir(parents=True, exist_ok=True)
     sample, votes, lut, uniq = load()
     corpus = pd.read_csv(CORPUS)
     judges = sorted({j for _, j in votes})
@@ -264,7 +267,7 @@ def main() -> None:
         "would contain non-integer values that got rounded to odd numbers. Checking the logged "
         "reasoning payloads for any evidence of fractional scoring:")
     frac = 0
-    with LOG.open(encoding="utf-8") as fh:
+    with gzip.open(LOG, "rt", encoding="utf-8") as fh:
         for line in fh:
             r = json.loads(line)
             if r.get("ok") and any(float(r[a]) != int(r[a]) for a in AXES):

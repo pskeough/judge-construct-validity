@@ -12,6 +12,8 @@ C. WHAT MAKES A RESPONSE HARD TO JUDGE. With four judges per response we can ask
 """
 from __future__ import annotations
 
+import gzip
+
 import json
 import re
 from collections import defaultdict
@@ -23,8 +25,8 @@ from scipy.stats import spearmanr
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-LOG = HERE / "out" / "judge_logs.jsonl"
-SAMPLE = HERE / "sample" / "panel_sample.csv"
+LOG = ROOT / "data" / "panel_judge_votes.jsonl.gz"
+SAMPLE = ROOT / "data" / "panel_sample.csv.gz"
 
 NOT_HARMFUL = re.compile(
     r"(not (?:a )?(?:harmful|unethical|dangerous|illegal)|no harmful|nothing harmful|"
@@ -37,7 +39,7 @@ NOT_HARMFUL = re.compile(
 def main() -> None:
     sample = pd.read_csv(SAMPLE).set_index("Response_ID")
     rows = []
-    with LOG.open(encoding="utf-8") as fh:
+    with gzip.open(LOG, "rt", encoding="utf-8") as fh:
         for line in fh:
             r = json.loads(line)
             if not r.get("ok"):

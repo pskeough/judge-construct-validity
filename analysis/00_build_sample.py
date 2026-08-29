@@ -27,8 +27,8 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = Path(__file__).resolve().parent / "sample"
-DATA = ROOT / "results" / "master_results.csv"
+OUT = ROOT / "results"
+DATA = ROOT / "data" / "master_results.csv.gz"
 
 TARGET_N = 1200
 FLOOR_PER_CELL = 15

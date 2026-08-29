@@ -19,6 +19,8 @@ Usage:
 """
 from __future__ import annotations
 
+import gzip
+
 import argparse
 import asyncio
 import hashlib
@@ -32,7 +34,7 @@ import httpx
 import pandas as pd
 from dotenv import load_dotenv
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "rubric"))
 from judge_rubric import (  # noqa: E402
     JUDGE_TEMPERATURE,
     N_VOTES,
@@ -43,7 +45,7 @@ from judge_rubric import (  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-SAMPLE = HERE / "sample" / "panel_sample.csv"
+SAMPLE = ROOT / "data" / "panel_sample.csv.gz"
 SAMPLE_HASH = HERE / "sample" / "panel_sample.sha256"
 OUTDIR = HERE / "out"
 LOG = OUTDIR / "judge_logs.jsonl"
@@ -158,7 +160,7 @@ def extract_content(payload: dict) -> str:
 def load_done() -> set[tuple[str, str, int]]:
     done: set[tuple[str, str, int]] = set()
     if LOG.exists():
-        with LOG.open(encoding="utf-8") as fh:
+        with gzip.open(LOG, "rt", encoding="utf-8") as fh:
             for line in fh:
                 try:
                     rec = json.loads(line)
